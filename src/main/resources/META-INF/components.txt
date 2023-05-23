@@ -1,0 +1,2 @@
+org.xwiki.contrib.systemproperties.internal.SystemPropertiesPropertiesSetterListener
+org.xwiki.contrib.systemproperties.internal.SystemPropertiesUpdaterManager
