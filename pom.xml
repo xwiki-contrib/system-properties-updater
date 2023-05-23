@@ -35,6 +35,8 @@
   <properties>
     <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
     <xwiki.issueManagement.jira.id>SYSPROP</xwiki.issueManagement.jira.id>
+    <xwiki.extension.name>System Properties Updater</xwiki.extension.name>
+    <xwiki.extension.category>api</xwiki.extension.category>
     <xwiki.extension.namespaces>{root}</xwiki.extension.namespaces>
     <checkstyle.suppressions.location>${basedir}/src/checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
   </properties>

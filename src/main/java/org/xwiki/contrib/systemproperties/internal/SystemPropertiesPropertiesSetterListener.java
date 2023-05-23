@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.ApplicationReadyEvent;
 import org.xwiki.bridge.event.WikiReadyEvent;
@@ -34,7 +35,6 @@ import org.xwiki.extension.event.ExtensionUpgradedEvent;
 import org.xwiki.observation.AbstractEventListener;
 import org.xwiki.observation.event.Event;
 import org.xwiki.platform.flavor.FlavorManager;
-import org.xwiki.text.StringUtils;
 
 /**
  * Event listener that will automatically update object properties upon wiki startup based on the JVM system properties.
