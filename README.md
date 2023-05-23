@@ -3,7 +3,7 @@
 Glossary feature for XWiki: ability to define glossary terms and have them highlighted in content with links pointing to their definitions.
 
 * Project Lead: [Clément Aubin](https://www.xwiki.org/xwiki/bin/view/XWiki/caubin)
-* [Documentation & Downloads](https://extensions.xwiki.org/)
+* [Documentation & Downloads](https://extensions.xwiki.org/xwiki/bin/view/Extension/System%20Properties%20Updater/)
 * [Issue Tracker](https://jira.xwiki.org/browse/SYSPROP)
 * Communication: [Forum](https://dev.xwiki.org/xwiki/bin/view/Community/Discuss), [Chat](https://dev.xwiki.org/xwiki/bin/view/Community/Chat)
 * [Development Practices](https://dev.xwiki.org)
