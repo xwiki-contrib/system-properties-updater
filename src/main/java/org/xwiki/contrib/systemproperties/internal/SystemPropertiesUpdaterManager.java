@@ -127,22 +127,20 @@ public class SystemPropertiesUpdaterManager
         DocumentReference documentReference = ((ObjectReference) reference.getParent()).getDocumentReference();
         logger.debug("Found object reference [{}] for document [{}]", reference, documentReference);
         try {
-            if (xwiki.exists(documentReference, context)) {
-                XWikiDocument document = xwiki.getDocument(documentReference, context);
-                BaseObject object = document.getXObject(reference.getParent(), true, context);
+            XWikiDocument document = xwiki.getDocument(documentReference, context);
+            BaseObject object = document.getXObject(reference.getParent(), true, context);
 
-                // We'll need to check if the object actually needs to be updated by the property
-                // in order to avoid non-needed history entries
-                // For this, we'll use a trick : check if the object PropertyInterface before
-                // putting the property is still the same as after.
-                PropertyInterface oldPropertyInterface = object.get(reference.getName());
-                object.set(reference.getName(), value, context);
-                if (!oldPropertyInterface.equals(object.get(reference.getName()))) {
-                    logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
-                    xwiki.saveDocument(document,
-                            String.format("Updated property [%s] from system properties",
-                                    reference.getName()), context);
-                }
+            // We'll need to check if the object actually needs to be updated by the property
+            // in order to avoid non-needed history entries
+            // For this, we'll use a trick : check if the object PropertyInterface before
+            // putting the property is still the same as after.
+            PropertyInterface oldPropertyInterface = object.get(reference.getName());
+            object.set(reference.getName(), value, context);
+            if (!object.get(reference.getName()).equals(oldPropertyInterface)) {
+                logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
+                xwiki.saveDocument(document,
+                        String.format("Updated property [%s] from system properties",
+                                reference.getName()), context);
             }
         } catch (XWikiException e) {
             logger.error("Failed to update property [{}]", reference, e);
