@@ -105,7 +105,6 @@ public class SystemPropertiesUpdaterManager
         String propertyPrefix = String.format(PREFIX_TEMPLATE, PROPERTY_PREFIX, wikiId);
         String attachmentPrefix = String.format(PREFIX_TEMPLATE, ATTACHMENT_PREFIX, wikiId);
 
-
         for (Map.Entry<Object, Object> variable : properties.entrySet()) {
             if (variable.getKey() instanceof String) {
                 String key = (String) variable.getKey();
@@ -130,7 +129,7 @@ public class SystemPropertiesUpdaterManager
         try {
             if (xwiki.exists(documentReference, context)) {
                 XWikiDocument document = xwiki.getDocument(documentReference, context);
-                BaseObject object = document.getXObject(reference.getParent());
+                BaseObject object = document.getXObject(reference.getParent(), true, context);
 
                 // We'll need to check if the object actually needs to be updated by the property
                 // in order to avoid non-needed history entries
