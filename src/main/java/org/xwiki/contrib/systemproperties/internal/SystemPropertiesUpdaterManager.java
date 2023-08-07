@@ -25,6 +25,7 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiAttachment;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
+import com.xpn.xwiki.objects.BaseObjectReference;
 import com.xpn.xwiki.objects.PropertyInterface;
 
 import org.apache.commons.io.IOUtils;
@@ -128,7 +129,8 @@ public class SystemPropertiesUpdaterManager
         logger.debug("Found object reference [{}] for document [{}]", reference, documentReference);
         try {
             XWikiDocument document = xwiki.getDocument(documentReference, context);
-            BaseObject object = document.getXObject(reference.getParent(), true, context);
+            BaseObject object =
+                document.getXObject(new BaseObjectReference(reference.getParent()).getXClassReference(), true, context);
 
             // We'll need to check if the object actually needs to be updated by the property
             // in order to avoid non-needed history entries
@@ -136,7 +138,8 @@ public class SystemPropertiesUpdaterManager
             // putting the property is still the same as after.
             PropertyInterface oldPropertyInterface = object.get(reference.getName());
             object.set(reference.getName(), value, context);
-            if (!object.get(reference.getName()).equals(oldPropertyInterface)) {
+            // If the old property interface is null, it means that the object has just been created
+            if (oldPropertyInterface == null || !object.get(reference.getName()).equals(oldPropertyInterface)) {
                 logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
                 xwiki.saveDocument(document,
                         String.format("Updated property [%s] from system properties",
