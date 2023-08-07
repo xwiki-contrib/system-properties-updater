@@ -29,7 +29,7 @@
   </parent>
   <groupId>org.xwiki.contrib.systemproperties</groupId>
   <artifactId>system-properties-updater</artifactId>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3</version>
   <name>System Properties Updater</name>
   <description>An extension that allows the update of XWiki object properties and attachments from JVM system properties</description>
   <properties>
@@ -44,7 +44,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/system-properties-updater.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/system-properties-updater.git</developerConnection>
     <url>https://github.com/xwiki-contrib/system-properties-updater/tree/main</url>
-    <tag>HEAD</tag>
+    <tag>system-properties-updater-1.3</tag>
   </scm>
   <developers>
     <developer>
