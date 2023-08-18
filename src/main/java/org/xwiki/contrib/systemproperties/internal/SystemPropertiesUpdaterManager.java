@@ -28,6 +28,7 @@ import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseObjectReference;
 import com.xpn.xwiki.objects.PropertyInterface;
 
+import org.apache.batik.util.ParsedURL;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -199,6 +200,16 @@ public class SystemPropertiesUpdaterManager
                 bytes = IOUtils.toByteArray(Files.newInputStream(Path.of(uri)));
             } catch (IOException e) {
                 logger.error("Failed to open file [{}] for attachment [{}]", uri, reference, e);
+            }
+        } else if (uri.getScheme().equalsIgnoreCase("data")) {
+            try {
+                ParsedURL parsedURL = new ParsedURL(uri.toString());
+
+                if (parsedURL.complete()) {
+                    bytes = IOUtils.toByteArray(parsedURL.openStream());
+                }
+            } catch (IOException e) {
+                logger.error("Failed to parse data URL [{}] for attachment [{}]", uri, reference, e);
             }
         } else {
             logger.error("Unsupported attachment URI [{}] from system property [{}]", value, reference);
