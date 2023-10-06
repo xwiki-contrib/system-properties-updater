@@ -37,6 +37,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.contrib.systemproperties.SystemPropertiesUpdaterConfiguration;
 import org.xwiki.model.reference.AttachmentReference;
 import org.xwiki.model.reference.AttachmentReferenceResolver;
 import org.xwiki.model.reference.DocumentReference;
@@ -76,6 +77,8 @@ public class SystemPropertiesUpdaterManager
 
     private static final String PREFIX_TEMPLATE = "%s:%s:";
 
+    private static final String DOUBLE_QUOTE = "\"";
+
     @Inject
     private Logger logger;
 
@@ -87,6 +90,9 @@ public class SystemPropertiesUpdaterManager
 
     @Inject
     private Provider<XWikiContext> contextProvider;
+
+    @Inject
+    private SystemPropertiesUpdaterConfiguration systemPropertiesUpdaterConfiguration;
 
     /**
      * Apply system properties on the given wiki.
@@ -110,15 +116,16 @@ public class SystemPropertiesUpdaterManager
         for (Map.Entry<Object, Object> variable : properties.entrySet()) {
             if (variable.getKey() instanceof String) {
                 String key = (String) variable.getKey();
+                Object value = maybeSanitizeValue(variable.getValue());
 
                 if (StringUtils.startsWith(key, propertyPrefix)) {
                     ObjectPropertyReference reference =
                         objectPropertyReferenceResolver.resolve(StringUtils.removeStart(key, propertyPrefix));
-                    updateProperty(reference, variable.getValue(), context, xwiki);
+                    updateProperty(reference, value, context, xwiki);
                 } else if (StringUtils.startsWith(key, attachmentPrefix)) {
                     AttachmentReference reference =
                         attachmentReferenceResolver.resolve(StringUtils.removeStart(key, attachmentPrefix));
-                    updateAttachment(reference, variable.getValue(), context, xwiki);
+                    updateAttachment(reference, value, context, xwiki);
                 }
             }
         }
@@ -216,5 +223,14 @@ public class SystemPropertiesUpdaterManager
         }
 
         return bytes;
+    }
+
+    private Object maybeSanitizeValue(Object value)
+    {
+        if (value instanceof String && systemPropertiesUpdaterConfiguration.trimDoubleQuotes()
+            && ((String) value).startsWith(DOUBLE_QUOTE) && ((String) value).endsWith(DOUBLE_QUOTE)) {
+            return ((String) value).substring(1, ((String) value).length() - 2);
+        }
+        return value;
     }
 }

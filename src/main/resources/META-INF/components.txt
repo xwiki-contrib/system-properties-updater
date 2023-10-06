@@ -1,2 +1,3 @@
+org.xwiki.contrib.systemproperties.internal.DefaultSystemPropertiesUpdaterConfiguration
 org.xwiki.contrib.systemproperties.internal.SystemPropertiesPropertiesSetterListener
 org.xwiki.contrib.systemproperties.internal.SystemPropertiesUpdaterManager
