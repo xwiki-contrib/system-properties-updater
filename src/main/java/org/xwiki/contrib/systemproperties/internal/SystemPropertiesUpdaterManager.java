@@ -229,7 +229,7 @@ public class SystemPropertiesUpdaterManager
     {
         if (value instanceof String && systemPropertiesUpdaterConfiguration.trimDoubleQuotes()
             && ((String) value).startsWith(DOUBLE_QUOTE) && ((String) value).endsWith(DOUBLE_QUOTE)) {
-            return ((String) value).substring(1, ((String) value).length() - 2);
+            return ((String) value).substring(1, ((String) value).length() - 1);
         }
         return value;
     }
