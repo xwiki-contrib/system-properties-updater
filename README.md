@@ -1,6 +1,6 @@
 # System Property Updater
 
-Glossary feature for XWiki: ability to define glossary terms and have them highlighted in content with links pointing to their definitions.
+An extension that allows the update of XWiki object properties and attachments from JVM system properties
 
 * Project Lead: [Clément Aubin](https://www.xwiki.org/xwiki/bin/view/XWiki/caubin)
 * [Documentation & Downloads](https://extensions.xwiki.org/xwiki/bin/view/Extension/System%20Properties%20Updater/)
