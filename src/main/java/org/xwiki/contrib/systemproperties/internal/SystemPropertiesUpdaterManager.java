@@ -174,10 +174,12 @@ public class SystemPropertiesUpdaterManager
                 XWikiDocument document = xwiki.getDocument(reference.getDocumentReference(), context);
                 XWikiAttachment attachment = new XWikiAttachment(document, reference.getName());
                 InputStream currentAttachmentIS = attachment.getContentInputStream(context);
-                byte[] currentAttachmentBytes = IOUtils.toByteArray(currentAttachmentIS);
-                currentAttachmentIS.close();
-                byte[] currentAttachmentSum = digest.digest(currentAttachmentBytes);
-
+                byte[] currentAttachmentSum = null;
+                if (currentAttachmentIS != null) {
+                    byte[] currentAttachmentBytes = IOUtils.toByteArray(currentAttachmentIS);
+                    currentAttachmentIS.close();
+                    currentAttachmentSum = digest.digest(currentAttachmentBytes);
+                }
                 if (currentAttachmentSum != newAttachmentSum) {
                     attachment.setContent(new ByteArrayInputStream(newFileBytes));
                     document.setAttachment(attachment);
