@@ -136,7 +136,7 @@ public class SystemPropertiesUpdaterManager
         DocumentReference documentReference = ((ObjectReference) reference.getParent()).getDocumentReference();
         logger.debug("Found object reference [{}] for document [{}]", reference, documentReference);
         try {
-            XWikiDocument document = xwiki.getDocument(documentReference, context);
+            XWikiDocument document = xwiki.getDocument(documentReference, context).clone();
             BaseObject object =
                 document.getXObject(new BaseObjectReference(reference.getParent()).getXClassReference(), true, context);
 
@@ -171,7 +171,7 @@ public class SystemPropertiesUpdaterManager
                 byte[] newAttachmentSum = digest.digest(newFileBytes);
 
 
-                XWikiDocument document = xwiki.getDocument(reference.getDocumentReference(), context);
+                XWikiDocument document = xwiki.getDocument(reference.getDocumentReference(), context).clone();
                 XWikiAttachment attachment = new XWikiAttachment(document, reference.getName());
                 InputStream currentAttachmentIS = attachment.getContentInputStream(context);
                 byte[] currentAttachmentSum = null;
