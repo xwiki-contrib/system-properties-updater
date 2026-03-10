@@ -26,7 +26,6 @@ import com.xpn.xwiki.doc.XWikiAttachment;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseObjectReference;
-import com.xpn.xwiki.objects.PropertyInterface;
 
 import org.apache.batik.util.ParsedURL;
 import org.apache.commons.io.IOUtils;
@@ -137,21 +136,18 @@ public class SystemPropertiesUpdaterManager
         logger.debug("Found object reference [{}] for document [{}]", reference, documentReference);
         try {
             XWikiDocument document = xwiki.getDocument(documentReference, context).clone();
+
             BaseObject object =
                 document.getXObject(new BaseObjectReference(reference.getParent()).getXClassReference(), true, context);
 
             // We'll need to check if the object actually needs to be updated by the property
             // in order to avoid non-needed history entries
-            // For this, we'll use a trick : check if the object PropertyInterface before
-            // putting the property is still the same as after.
-            PropertyInterface oldPropertyInterface = object.get(reference.getName());
-            object.set(reference.getName(), value, context);
-            // If the old property interface is null, it means that the object has just been created
-            if (oldPropertyInterface == null || !object.get(reference.getName()).equals(oldPropertyInterface)) {
+            // If the property interface is null, it means that the object has just been created
+            if (object.get(reference.getName()) == null || !object.getStringValue(reference.getName()).equals(value)) {
+                object.set(reference.getName(), value, context);
                 logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
                 xwiki.saveDocument(document,
-                        String.format("Updated property [%s] from system properties",
-                                reference.getName()), context);
+                    String.format("Updated property [%s] from system properties", reference.getName()), context);
             }
         } catch (XWikiException e) {
             logger.error("Failed to update property [{}]", reference, e);
@@ -169,7 +165,6 @@ public class SystemPropertiesUpdaterManager
                 // to the attahcment we are trying to provide.
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] newAttachmentSum = digest.digest(newFileBytes);
-
 
                 XWikiDocument document = xwiki.getDocument(reference.getDocumentReference(), context).clone();
                 XWikiAttachment attachment = new XWikiAttachment(document, reference.getName());
