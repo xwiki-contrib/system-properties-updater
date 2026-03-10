@@ -26,6 +26,7 @@ import com.xpn.xwiki.doc.XWikiAttachment;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseObjectReference;
+import com.xpn.xwiki.objects.BaseProperty;
 
 import org.apache.batik.util.ParsedURL;
 import org.apache.commons.io.IOUtils;
@@ -139,12 +140,13 @@ public class SystemPropertiesUpdaterManager
 
             BaseObject object =
                 document.getXObject(new BaseObjectReference(reference.getParent()).getXClassReference(), true, context);
-
             // We'll need to check if the object actually needs to be updated by the property
             // in order to avoid non-needed history entries
-            // If the property interface is null, it means that the object has just been created
-            if (object.get(reference.getName()) == null || !object.getStringValue(reference.getName()).equals(value)) {
-                object.set(reference.getName(), value, context);
+            BaseProperty oldBaseProperty = document.getXObjectProperty(reference);
+            Object oldValue = oldBaseProperty != null ? oldBaseProperty.getValue() : null;
+            object.set(reference.getName(), value, context);
+            // If the base property is null, it means that the object has just been created
+            if (oldBaseProperty == null || !document.getXObjectProperty(reference).getValue().equals(oldValue)) {
                 logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
                 xwiki.saveDocument(document,
                     String.format("Updated property [%s] from system properties", reference.getName()), context);
