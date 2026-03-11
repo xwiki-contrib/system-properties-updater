@@ -59,6 +59,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -145,8 +146,10 @@ public class SystemPropertiesUpdaterManager
             BaseProperty oldBaseProperty = document.getXObjectProperty(reference);
             Object oldValue = oldBaseProperty != null ? oldBaseProperty.getValue() : null;
             object.set(reference.getName(), value, context);
+            BaseProperty newBaseProperty = document.getXObjectProperty(reference);
+            Object newValue = newBaseProperty != null ? newBaseProperty.getValue() : null;
             // If the base property is null, it means that the object has just been created
-            if (oldBaseProperty == null || !document.getXObjectProperty(reference).getValue().equals(oldValue)) {
+            if (oldBaseProperty == null || !Objects.equals(newValue, oldValue)) {
                 logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
                 xwiki.saveDocument(document,
                     String.format("Updated property [%s] from system properties", reference.getName()), context);
