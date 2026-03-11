@@ -26,7 +26,7 @@ import com.xpn.xwiki.doc.XWikiAttachment;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseObjectReference;
-import com.xpn.xwiki.objects.PropertyInterface;
+import com.xpn.xwiki.objects.BaseProperty;
 
 import org.apache.batik.util.ParsedURL;
 import org.apache.commons.io.IOUtils;
@@ -59,6 +59,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -137,21 +138,21 @@ public class SystemPropertiesUpdaterManager
         logger.debug("Found object reference [{}] for document [{}]", reference, documentReference);
         try {
             XWikiDocument document = xwiki.getDocument(documentReference, context).clone();
+
             BaseObject object =
                 document.getXObject(new BaseObjectReference(reference.getParent()).getXClassReference(), true, context);
-
             // We'll need to check if the object actually needs to be updated by the property
             // in order to avoid non-needed history entries
-            // For this, we'll use a trick : check if the object PropertyInterface before
-            // putting the property is still the same as after.
-            PropertyInterface oldPropertyInterface = object.get(reference.getName());
+            BaseProperty oldBaseProperty = document.getXObjectProperty(reference);
+            Object oldValue = oldBaseProperty != null ? oldBaseProperty.getValue() : null;
             object.set(reference.getName(), value, context);
-            // If the old property interface is null, it means that the object has just been created
-            if (oldPropertyInterface == null || !object.get(reference.getName()).equals(oldPropertyInterface)) {
+            BaseProperty newBaseProperty = document.getXObjectProperty(reference);
+            Object newValue = newBaseProperty != null ? newBaseProperty.getValue() : null;
+            // If the base property is null, it means that the object has just been created
+            if (oldBaseProperty == null || !Objects.equals(newValue, oldValue)) {
                 logger.info("Updating object property [{}] to value [{}] from system properties", reference, value);
                 xwiki.saveDocument(document,
-                        String.format("Updated property [%s] from system properties",
-                                reference.getName()), context);
+                    String.format("Updated property [%s] from system properties", reference.getName()), context);
             }
         } catch (XWikiException e) {
             logger.error("Failed to update property [{}]", reference, e);
@@ -169,7 +170,6 @@ public class SystemPropertiesUpdaterManager
                 // to the attahcment we are trying to provide.
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] newAttachmentSum = digest.digest(newFileBytes);
-
 
                 XWikiDocument document = xwiki.getDocument(reference.getDocumentReference(), context).clone();
                 XWikiAttachment attachment = new XWikiAttachment(document, reference.getName());
